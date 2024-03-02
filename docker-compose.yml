@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  fastapi-app:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app 
+    depends_on:
+      - selenium-server
+
+  selenium-server:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
