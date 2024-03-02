@@ -23,7 +23,8 @@ This project demonstrates the use of FastAPI and Selenium within Docker containe
    git clone https://social-arbjuration
    cd social-arbjuration
 2. **Build and Run with Docker Compose**
-   docker-compose up --build
+    ```bash
+    docker-compose up --build
 
 3. **Usage**
    http://localhost/scrape?url=https://example.com
