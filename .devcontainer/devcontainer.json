@@ -5,5 +5,10 @@
     "workspaceFolder": "/app",
     "forwardPorts": [80],
     "postCreateCommand": "echo 'Container started'",
-    "shutdownAction": "stopCompose"
+    "shutdownAction": "stopCompose",
+    "mounts": ["source=/tmp/ssh-agent.sock,target=/tmp/ssh-agent.sock,type=bind"],
+    "remoteEnv": {"SSH_AUTH_SOCK": "/tmp/ssh-agent.sock"}
+
+
+
 }
