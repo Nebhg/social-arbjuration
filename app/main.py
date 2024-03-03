@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
-from app.scraper import scrape_website
+from scraper import scrape_website
 
 app = FastAPI()
 
@@ -14,4 +14,4 @@ def run_scraper(url: str = Query(..., description="The URL to scrape")):
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World1211"}
+    return {"Hello": "Worladad11"}
