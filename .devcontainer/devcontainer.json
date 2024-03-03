@@ -1,0 +1,9 @@
+{
+    "name": "My FastAPI & Selenium Project",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "fastapi-app",
+    "workspaceFolder": "/app",
+    "forwardPorts": [80],
+    "postCreateCommand": "echo 'Container started'",
+    "shutdownAction": "stopCompose"
+}
