@@ -1,6 +1,13 @@
 {
     "name": "My FastAPI & Selenium Project",
-    "dockerComposeFile": [
+    "remoteEnv": {
+        "SSH_AUTH_SOCK": "/tmp/.ssh-agent.sock"
+    },
+    "mounts": [
+        "source=${localEnv:SSH_AUTH_SOCK},target=/tmp/.ssh-agent.sock,type=bind",
+        "source=/home/ben/.ssh,target=/root/.ssh,type=bind,consistency=cached"
+    ],
+        "dockerComposeFile": [
         "../docker-compose.yml",
         "docker-compose.yml"
     ],
