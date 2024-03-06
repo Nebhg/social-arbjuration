@@ -5,13 +5,10 @@ app = FastAPI()
 
 
 @app.get("/scrape")
-def run_scraper(url: str = Query(..., description="The URL to scrape")):
+def run_scraper():
     try:
-        results = scrape_website(url)
+        results = scrape_website()
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/")
-def read_root():
-    return {"Hello": "Worladadadada11"}
