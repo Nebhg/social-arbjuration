@@ -5,12 +5,11 @@ app = FastAPI()
 
 
 @app.get("/scrape")
-def run_scraper():
+def run_scraper(search_term: str = Query(...)):
     scraper = RedditScraper()
     try:
-        results = scraper.scrape()
+        results = scraper.scrape(search_term)
         return results
     except Exception as e:
-        # If an error occurs, make sure to close the scraper before raising an HTTPException
         scraper.close()
         raise HTTPException(status_code=500, detail=str(e))
