@@ -20,58 +20,53 @@ class RedditScraper(BaseScraper):
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "input[jsname='YPqjbf']"))
             )
 
-            # Clear the search box, enter the search term
-            
+            # Enter the search term and initiate the search
             time.sleep(1)  # Just to be safe
             search_box.click()  # Click the search box before typing
             search_box.clear()
             search_box.send_keys(search_term)
+            search_box.send_keys(Keys.RETURN)
             self.driver.save_screenshot('after_input.png')  # Save screenshot for debugging
-            search_box.send_keys(Keys.ENTER)
 
-
-           # After clicking the search, wait for the results to be visible
-            WebDriverWait(self.driver, 20).until(
-                EC.visibility_of_element_located((By.CSS_SELECTOR, "div.line-chart"))
+            # After search initiation, wait for cookie consent and click it
+            WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".cookieBarConsentButton"))
             )
+            cookie_consent_button = self.driver.find_element(By.CSS_SELECTOR, ".cookieBarConsentButton")
+            cookie_consent_button.click()
+            self.driver.save_screenshot('before_accept.png')  # Save screenshot for debugging
 
-            # Additional delay to ensure the data table is loaded in the background
-            time.sleep(5)  # Wait for the dynamic content to load
+            # Refresh the page and wait for the data to load
+            self.driver.refresh()
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='A tabular representation of the data in the chart.']"))
+            )
+            time.sleep(3)  # Additional delay to ensure the data table is loaded
+            self.driver.save_screenshot('chart_data_loaded.png')  # Save screenshot for debugging
 
-            # Try to locate the hidden data table with the chart information
-            try:
-                table_data = self.driver.find_element(By.CSS_SELECTOR, 'div[aria-label="A tabular representation of the data in the chart."]')
-                if table_data:
-                    self.driver.save_screenshot('chart_data_loaded.png')  # Save screenshot for debugging
-                    # Extract the table content using BeautifulSoup or directly with Selenium
-                    # If using BeautifulSoup, uncomment the next line
-                    soup = BeautifulSoup(table_data.get_attribute('innerHTML'), "html.parser")
-                    data = soup.find_all('td')  # Your logic to extract data
-                    return {"data": data}
-            except Exception as e:
-                print(f"Failed to find the data table: {e}")
-           
-            # # Now that the results are loaded, extract the HTML content of the page
-            # page_source = self.driver.page_source
-            # soup = BeautifulSoup(page_source, "html.parser")
+            # Extract the data from the hidden table
+            table_data = self.driver.find_element(By.CSS_SELECTOR, 'div[aria-label="A tabular representation of the data in the chart."] table')
+            soup = BeautifulSoup(table_data.get_attribute('outerHTML'), "html.parser")
+            rows = soup.find_all('tr')
+            data = []
+            for row in rows[1:]:  # Skip the header row
+                cols = row.find_all('td')
+                if cols:
+                    data_point = {
+                        "date": cols[0].get_text(),
+                        "value": cols[1].get_text()
+                    }
+                    data.append(data_point)
 
-            # # Find the data in the hidden table
-            # table = soup.find('div', {'aria-label': 'A tabular representation of the data in the chart.'})
-            # if table:
-            #     table_data = table.find_all('td')
-            #     extracted_data = [td.get_text() for td in table_data]
-            #     return {"Extracted Data": extracted_data}
-            # else:
-            #     return {"Error": "Table with data not found."}
+            return {"data": data}
 
         except Exception as e:
-            print(f"An error occurred: {e}")
             self.driver.save_screenshot('error.png')  # Save screenshot for debugging
+            print(f"An error occurred: {e}")
             return {"error": str(e)}
 
         finally:
             self.close()
-
 
 
 
