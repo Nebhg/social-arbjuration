@@ -25,17 +25,32 @@ class RedditScraper(BaseScraper):
             search_box.click()  # Click the search box before typing
             search_box.clear()
             search_box.send_keys(search_term)
-            # Save screenshot for debugging
-            self.driver.save_screenshot('after_input.png')
+            self.driver.save_screenshot('after_input.png')  # Save screenshot for debugging
             search_box.send_keys(Keys.ENTER)
 
+            self.driver.save_screenshot('before_accept.png')
             # After search initiation, wait for cookie consent and click it
             WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, ".cookieBarConsentButton"))
             )
             cookie_consent_button = self.driver.find_element(By.CSS_SELECTOR, ".cookieBarConsentButton")
             cookie_consent_button.click()
-            self.driver.save_screenshot('before_accept.png')  # Save screenshot for debugging
+         
+             # Navigate to the dropdown and click it to open
+            dropdown = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".hierarchy-select"))
+            )
+            dropdown.click()
+            self.driver.save_screenshot('after_dropdown_click.png')  # Save screenshot for debugging
+
+            # If "Worldwide" is not already selected, click it
+            # Depending on the structure after clicking the dropdown, this selector might need to be adjusted.
+            worldwide_option = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Worldwide']"))
+            )
+            if worldwide_option:
+                worldwide_option.click()
+                self.driver.save_screenshot('after_worldwide_select.png')  # Save screenshot for debugging
 
             # Refresh the page and wait for the data to load
             self.driver.refresh()
@@ -44,6 +59,11 @@ class RedditScraper(BaseScraper):
             )
             time.sleep(3)  # Additional delay to ensure the data table is loaded
             self.driver.save_screenshot('chart_data_loaded.png')  # Save screenshot for debugging
+            # Refresh the page and wait for the data to load
+            self.driver.refresh()
+            time.sleep(3)  # Ensure dynamic content loads
+            self.driver.save_screenshot('after_refresh.png')
+
 
             # Extract the data from the hidden table
             table_data = self.driver.find_element(By.CSS_SELECTOR, 'div[aria-label="A tabular representation of the data in the chart."] table')
