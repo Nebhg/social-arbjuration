@@ -25,8 +25,9 @@ class RedditScraper(BaseScraper):
             search_box.click()  # Click the search box before typing
             search_box.clear()
             search_box.send_keys(search_term)
-            search_box.send_keys(Keys.RETURN)
-            self.driver.save_screenshot('after_input.png')  # Save screenshot for debugging
+            # Save screenshot for debugging
+            self.driver.save_screenshot('after_input.png')
+            search_box.send_keys(Keys.ENTER)
 
             # After search initiation, wait for cookie consent and click it
             WebDriverWait(self.driver, 10).until(
