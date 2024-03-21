@@ -22,7 +22,7 @@ class BaseScraper(ABC):
         chrome_options.add_experimental_option("prefs", {"loggingPrefs": {"browser": "ALL"}})
 
         driver = webdriver.Remote(
-            command_executor='http://172.23.0.2:4444',
+            command_executor='http://172.18.0.2:4444',
             options=chrome_options
         )
         return driver
