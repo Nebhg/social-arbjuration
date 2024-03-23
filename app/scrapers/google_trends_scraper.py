@@ -9,9 +9,11 @@ import time
 
 class GoogleTrendsScraper(BaseScraper):
     def scrape(self, search_term):
+        print("Entered func")
         try:
             # Navigate to Google Trends
             self.driver.get("https://trends.google.com/trends/")
+            print("Url retrieved")
             time.sleep(2)  # Let the page load
             self.driver.save_screenshot('Test01.png')  # Save screenshot for debugging
 
@@ -19,7 +21,7 @@ class GoogleTrendsScraper(BaseScraper):
             search_box = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "input[jsname='YPqjbf']"))
             )
-
+            print("wait for search box to be interactable")
             # Enter the search term and initiate the search
             time.sleep(1)  # Just to be safe
             search_box.click()  # Click the search box before typing
@@ -33,6 +35,7 @@ class GoogleTrendsScraper(BaseScraper):
             WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, ".cookieBarConsentButton"))
             )
+            print("Cookie accepted")
             cookie_consent_button = self.driver.find_element(By.CSS_SELECTOR, ".cookieBarConsentButton")
             cookie_consent_button.click()
          
@@ -40,11 +43,12 @@ class GoogleTrendsScraper(BaseScraper):
             dropdown = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, ".hierarchy-select"))
             )
+            print("Wait for dropdown")
             dropdown.click()
             time.sleep(1)
             self.driver.save_screenshot('Test04.png')  # Save screenshot for debugging
 
-           
+            print("wait for options in dropdown")
             # Depending on the structure after clicking the dropdown, this selector might need to be adjusted.
             worldwide_option = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Worldwide']"))
@@ -58,6 +62,7 @@ class GoogleTrendsScraper(BaseScraper):
             time_frame_dropdown = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "md-select[aria-label^='Select time period']"))
             )
+            print("wait for time frame dropdown")
             if time_frame_dropdown:
                 time_frame_dropdown.click()
                 self.driver.save_screenshot('Test06.png')
@@ -67,6 +72,7 @@ class GoogleTrendsScraper(BaseScraper):
             past_30_days_option = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//md-option/div[normalize-space()='Past 30 days']"))
             )
+            print("wait for options in time frame dropdown")
             self.driver.execute_script("arguments[0].click();", past_30_days_option)
             time.sleep(1)
             self.driver.save_screenshot('Test07.png')
@@ -75,6 +81,7 @@ class GoogleTrendsScraper(BaseScraper):
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='A tabular representation of the data in the chart.']"))
             )
+            print("wait for tabular data to appear")
             time.sleep(3)  # Additional delay to ensure the data table is loaded
 
             self.driver.save_screenshot('Test08.png')  # Save screenshot for debugging
@@ -84,6 +91,7 @@ class GoogleTrendsScraper(BaseScraper):
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='A tabular representation of the data in the chart.']"))
             )
+            print("Page refreshed and data loaded")
             time.sleep(3)  # Additional delay to ensure the data table is loaded
             self.driver.save_screenshot('Test09.png')  # Save screenshot for debugging
             # Refresh the page and wait for the data to load
@@ -113,9 +121,7 @@ class GoogleTrendsScraper(BaseScraper):
             print(f"An error occurred: {e}")
             return {"error": str(e)}
 
-        finally:
-            self.close()
-
+        
 
 
 
