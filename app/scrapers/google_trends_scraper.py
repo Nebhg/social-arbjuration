@@ -18,7 +18,7 @@ class GoogleTrendsScraper(BaseScraper):
             self.driver.save_screenshot('Test01.png')  # Save screenshot for debugging
 
             # Wait for the input box to be present and interactable
-            search_box = WebDriverWait(self.driver, 10).until(
+            search_box = WebDriverWait(self.driver, 1).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "input[jsname='YPqjbf']"))
             )
             print("wait for search box to be interactable")
@@ -32,7 +32,7 @@ class GoogleTrendsScraper(BaseScraper):
 
             self.driver.save_screenshot('Test03.png')
             # After search initiation, wait for cookie consent and click it
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 1).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, ".cookieBarConsentButton"))
             )
             print("Cookie accepted")
@@ -40,7 +40,7 @@ class GoogleTrendsScraper(BaseScraper):
             cookie_consent_button.click()
          
              # Navigate to the dropdown and click it to open
-            dropdown = WebDriverWait(self.driver, 10).until(
+            dropdown = WebDriverWait(self.driver, 1).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, ".hierarchy-select"))
             )
             print("Wait for dropdown")
@@ -50,7 +50,7 @@ class GoogleTrendsScraper(BaseScraper):
 
             print("wait for options in dropdown")
             # Depending on the structure after clicking the dropdown, this selector might need to be adjusted.
-            worldwide_option = WebDriverWait(self.driver, 10).until(
+            worldwide_option = WebDriverWait(self.driver, 1).until(
                 EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Worldwide']"))
             )
             # If "Worldwide" is not already selected, click it
@@ -59,7 +59,7 @@ class GoogleTrendsScraper(BaseScraper):
                 self.driver.save_screenshot('Test05.png')  # Save screenshot for debugging
             
             # Navigate to the dropdown and click it to open
-            time_frame_dropdown = WebDriverWait(self.driver, 10).until(
+            time_frame_dropdown = WebDriverWait(self.driver, 1).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "md-select[aria-label^='Select time period']"))
             )
             print("wait for time frame dropdown")
@@ -69,7 +69,7 @@ class GoogleTrendsScraper(BaseScraper):
 
             # Wait for the "Past 30 days" option to become visible and clickable
             # The text "Past 30 days" should be adjusted based on the exact text used in the option within the dropdown
-            past_30_days_option = WebDriverWait(self.driver, 10).until(
+            past_30_days_option = WebDriverWait(self.driver, 1).until(
                 EC.element_to_be_clickable((By.XPATH, "//md-option/div[normalize-space()='Past 30 days']"))
             )
             print("wait for options in time frame dropdown")
@@ -78,7 +78,7 @@ class GoogleTrendsScraper(BaseScraper):
             self.driver.save_screenshot('Test07.png')
 
             # Wait for the data to load after selecting the time frame
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 1).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='A tabular representation of the data in the chart.']"))
             )
             print("wait for tabular data to appear")
@@ -88,7 +88,7 @@ class GoogleTrendsScraper(BaseScraper):
 
             # Refresh the page and wait for the data to load
             self.driver.refresh()
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 2).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='A tabular representation of the data in the chart.']"))
             )
             print("Page refreshed and data loaded")
@@ -115,12 +115,14 @@ class GoogleTrendsScraper(BaseScraper):
                     data.append(data_point)
 
             return {"data": data}
-
+        
         except Exception as e:
             self.driver.save_screenshot('error.png')  # Save screenshot for debugging
             print(f"An error occurred: {e}")
             return {"error": str(e)}
 
+        finally: 
+            self.close()
         
 
 

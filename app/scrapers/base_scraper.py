@@ -15,7 +15,7 @@ class BaseScraper(ABC):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--window-size=1920,1080")
-        chrome_options.add_argument(f"--proxy-server={self.proxy}")
+        #chrome_options.add_argument(f"--proxy-server={self.proxy}")
 
         
         # Set up Chrome logging

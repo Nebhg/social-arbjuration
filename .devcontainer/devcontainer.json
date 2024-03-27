@@ -24,7 +24,7 @@
             ]
         }
     },
-    "forwardPorts": [80, 8000],
+    "forwardPorts": [8000,80],
     "postCreateCommand": "pip3 install --user -r requirements.txt",
     "shutdownAction": "stopCompose"
 }
