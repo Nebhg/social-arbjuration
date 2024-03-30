@@ -20,7 +20,8 @@
                 "ms-python.python",
                 "GitHub.copilot",
                 "ms-python.debugpy",
-                "GitHub.copilot-chat"
+                "GitHub.copilot-chat",
+                "rangav.vscode-thunder-client"
             ]
         }
     },
