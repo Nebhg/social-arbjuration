@@ -10,8 +10,14 @@ services:
       - /home/ben/social-arbjuration/app
     depends_on:
       - selenium-server
+      - redis
 
   selenium-server:
     image: selenium/standalone-chrome:latest
     ports:
       - "4444:4444"
+
+  redis:
+      image: redis/redis-stack-server:latest
+      ports:
+        - "6379:6379"

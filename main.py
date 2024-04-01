@@ -6,15 +6,28 @@ from app.scrapers.google_trends_scraper import GoogleTrendsScraper
 from app.scrapers.generic_url_scraper import GenericUrlScraper
 import logging
 import debugpy
+import redis 
+from rejson import Client, Path
+import json
 
 debugpy.listen(5678)
 app = FastAPI()
+r = redis.Redis(host="redis", port=6379)
+# Initialize the RedisJSON client
+rj = Client(host='redis', port=6379, decode_responses=True)
+
+@app.get("/hits")
+def read_root():
+    r.incr("hits")
+    return {"number of hits": r.get("hits")}
 
 @app.get("/scrapeBody")
 def run_url_scraper(url: str):
     scraper = GenericUrlScraper()
     try:
         results = scraper.scrape(url)
+        rj.jsonset(url, Path.rootPath(), results)
+        
         return results
     except Exception as e:
         scraper.close()
