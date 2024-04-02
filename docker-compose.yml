@@ -21,3 +21,8 @@ services:
       image: redis/redis-stack-server:latest
       ports:
         - "6379:6379"
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "5540:5540"

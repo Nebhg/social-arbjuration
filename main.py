@@ -4,6 +4,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from typing import List
 from app.scrapers.google_trends_scraper import GoogleTrendsScraper
 from app.scrapers.generic_url_scraper import GenericUrlScraper
+from app.scrapers.google_search_scraper import GoogleSearchScraper
 import logging
 import debugpy
 import redis 
@@ -61,5 +62,26 @@ async def run_batch_scraper(search_terms: List[str] = Query(...)):
 
     return results
 
+@app.get("/data/{key}")
+async def get_json_data(key: str):
+    try:
+        # Use RedisJSON client to get data for the given key
+        data = rj.jsonget(key, Path.rootPath())
+        if data is None:
+            raise HTTPException(status_code=404, detail="Data not found")
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    
+
+@app.get("/search")
+async def search_google(query: str):
+    try:
+        scraper = GoogleSearchScraper()
+        search_results = scraper.scrape(query)
+        if "error" in search_results:
+            raise HTTPException(status_code=500, detail=search_results["error"])
+        rj.jsonset(f"search:{query}", Path.rootPath(), search_results)
+        return search_results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))   
