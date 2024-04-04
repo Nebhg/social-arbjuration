@@ -10,6 +10,7 @@ from .base_scraper import BaseScraper
 class GoogleSearchScraper(BaseScraper):
     def scrape(self, search_term, num_results=45):
         results = []
+        paa_results = []
         try:
             search_url = f"https://www.google.com/search?q={search_term}"
             self.driver.get(search_url)
@@ -80,6 +81,16 @@ class GoogleSearchScraper(BaseScraper):
                 except NoSuchElementException:
                     print("No 'More results' button found or end of results reached")
                     break
+
+                try:
+                    paa_elements = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.related-question-pair")))
+                    for element in paa_elements:
+                        question = element.find_element(By.CSS_SELECTOR, "div").text
+                        paa_results.append(question)
+                
+                except (NoSuchElementException, TimeoutException):
+                    print("People Also Ask section not found")
                 
                 if len(results) >= num_results:
                     print(f"Reached the desired number of results: {len(results)}")
@@ -94,4 +105,4 @@ class GoogleSearchScraper(BaseScraper):
         finally:
             self.close()
             
-        return {'results': results}
+        return {'results': results, 'peopleAlsoASked': paa_results}
