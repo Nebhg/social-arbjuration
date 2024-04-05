@@ -7,20 +7,22 @@ from bs4 import BeautifulSoup
 import time
 from .base_scraper import BaseScraper
 
-class GoogleSearchScraper(BaseScraper):
-    def close(self):
-        # Close the browser window
-        self.driver.quit()
 
-    def scroll_and_parse(self, num_scrolls=10):
+class GoogleSearchScraper(BaseScraper):
+
+    def __init__(self, num_results=100):
+        super().__init__()
+        self.num_results = num_results
+
+    def scroll_and_parse(self):
         results = []
         seen_urls = set()
         paa_results = []
         paa_seen = set()
 
-        for _ in range(num_scrolls):
+        while len(results) < self.num_results:
+            time.sleep(0.5)  # Wait for the dynamic content to load.
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(2)  # Wait for the dynamic content to load.
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
 
             # Parse search results
@@ -53,9 +55,18 @@ class GoogleSearchScraper(BaseScraper):
                     paa_results.append(question)
                     paa_seen.add(question)
 
+            try:
+                more_results_button = self.driver.find_element(By.CSS_SELECTOR, "div.GNJvt.ipz2Oe")
+                self.driver.execute_script("arguments[0].click();", more_results_button)
+                print("Clicked 'More results' button")
+            
+            except NoSuchElementException:
+                    print("No 'More results' button found or end of results reached")
+                    break
+
         return results, paa_results
 
-    def scrape(self, search_term, num_scrolls=5):
+    def scrape(self, search_term):
         try:
             search_url = f"https://www.google.com/search?q={search_term}"
             self.driver.get(search_url)
@@ -70,7 +81,7 @@ class GoogleSearchScraper(BaseScraper):
                 print("No cookie consent button found or not found in time.")
 
             # Your scraping logic...
-            results, paa_results = self.scroll_and_parse(num_scrolls)
+            results, paa_results = self.scroll_and_parse()
             return {'results': results, 'peopleAlsoAsked': paa_results}
         finally:
             self.close()  # Ensures that the driver is quit even if an exception occurs

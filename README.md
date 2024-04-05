@@ -39,4 +39,9 @@ This project demonstrates the use of FastAPI and Selenium within Docker containe
    - That's it! You should now be able to interact with the API. Please refer to the Postman workspace to see the list of available request methods
 
 
+   To visualise the docker composition of the project enter the following command:
+   ```bash
+   docker run --rm -it --name dcv -v ${PWD}:/input pmsipilot/docker-compose-viz render -m image docker-compose.yml --output-file=achmea.techday.png --force
+   ```
+
 Contributions to the project are welcome! Please follow the standard fork and pull request workflow. If you encounter any issues or have suggestions for improvements, feel free to open an issue or submit a pull request.
