@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query
 from asyncio import as_completed
 from concurrent.futures.thread import ThreadPoolExecutor
+from fastapi.concurrency import run_in_threadpool
 from typing import List
 from app.scrapers.google_trends_scraper import GoogleTrendsScraper
 from app.scrapers.generic_url_scraper import GenericUrlScraper
@@ -79,9 +80,10 @@ async def search_google(query: str):
     try:
         scraper = GoogleSearchScraper()
         search_results = scraper.scrape(query)
-        if "error" in search_results:
-            raise HTTPException(status_code=500, detail=search_results["error"])
         rj.jsonset(f"search:{query}", Path.rootPath(), search_results)
         return search_results
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))   
+        # Handle any exceptions that were reraised from the scraper
+        print(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
