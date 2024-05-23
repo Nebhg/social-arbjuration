@@ -85,3 +85,5 @@ class GoogleSearchScraper(BaseScraper):
             return {'results': results, 'peopleAlsoAsked': paa_results}
         finally:
             self.close()  # Ensures that the driver is quit even if an exception occurs
+
+    #testing git
